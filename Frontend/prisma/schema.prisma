@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -9,42 +8,50 @@ datasource db {
 }
 
 model User {
-  id            String    @id
+  id            String   @id @default(cuid())
   name          String
-  email         String
-  emailVerified Boolean   @default(false)
+  // username      String   @unique
+  email         String   @unique
+  emailVerified Boolean  @default(false)
   image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  sessions      Session[]
-  accounts      Account[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
-  @@unique([email])
+  sessions Session[]
+  accounts Account[]
+
+  roomsOwned  Room[]       @relation("RoomAdmin")
+  memberships RoomMember[]
+  chats       Chat[]
+  jobs        Job[]
+
   @@map("user")
 }
 
 model Session {
-  id        String   @id
+  id        String   @id @default(cuid())
   expiresAt DateTime
-  token     String
+  token     String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   ipAddress String?
   userAgent String?
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([token])
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@index([userId])
   @@map("session")
 }
 
 model Account {
-  id                    String    @id
-  accountId             String
-  providerId            String
-  userId                String
-  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id         String @id @default(cuid())
+  accountId  String
+  providerId String
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   accessToken           String?
   refreshToken          String?
   idToken               String?
@@ -60,7 +67,7 @@ model Account {
 }
 
 model Verification {
-  id         String   @id
+  id         String   @id @default(cuid())
   identifier String
   value      String
   expiresAt  DateTime
@@ -69,4 +76,67 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
+}
+
+model Room {
+  id        Int      @id @default(autoincrement())
+  slug      String   @unique
+  createdAt DateTime @default(now())
+
+  adminId String
+  admin   User   @relation("RoomAdmin", fields: [adminId], references: [id], onDelete: Cascade)
+
+  passwordHash String? // hashed password
+  inviteToken  String  @unique @default(cuid())
+
+  chats   Chat[]
+  canvas  Canvas?
+  jobs    Job[]
+  members RoomMember[]
+}
+
+model RoomMember {
+  id       Int      @id @default(autoincrement())
+  roomId   Int
+  userId   String
+  joinedAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  room Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@unique([roomId, userId])
+}
+
+model Chat {
+  id        Int      @id @default(autoincrement())
+  message   Json
+  createdAt DateTime @default(now())
+
+  userId String
+  roomId Int
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  room Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
+}
+
+model Canvas {
+  id        Int      @id @default(autoincrement())
+  roomId    Int      @unique
+  state     Json
+  updatedAt DateTime @updatedAt
+
+  room Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
+}
+
+model Job {
+  id        String   @id @default(cuid())
+  status    String   @default("pending")
+  resultUrl String?
+  createdAt DateTime @default(now())
+
+  userId String
+  roomId Int
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  room Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
 }

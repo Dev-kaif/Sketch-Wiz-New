@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { TRPCReactProvider } from "@/trpc/client";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -17,7 +18,10 @@ export default function RootLayout({
       <body
         className={`antialiased`}
       >
-        {children}
+        <TRPCReactProvider>
+          <Toaster />
+          {children}
+        </TRPCReactProvider>
       </body>
     </html>
   );
