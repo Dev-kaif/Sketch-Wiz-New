@@ -33,6 +33,13 @@ export interface AIMessage {
     result?: string;
 }
 
+// New: for AI image job tracking
+export interface AIImageJob {
+    jobId: string;
+    status: "pending" | "done" | "failed";
+    resultUrl?: string;
+}
+
 export interface AuthPayload extends JwtPayload {
     id: UserId;
 }
@@ -43,16 +50,17 @@ export interface User {
     userId: number;
 }
 
-
 export type ClientMessage =
     | { type: "join_room"; roomId: RoomId }
     | { type: "leave_room"; roomId: RoomId }
     | { type: "chat"; roomId: RoomId; message: ChatMessage }
     | { type: "ai"; roomId: RoomId; message: AIMessage }
-    | { type: "canvas_update"; roomId: RoomId; message: CanvasState };
+    | { type: "canvas_update"; roomId: RoomId; message: CanvasState }
+    | { type: "ai_image_request"; roomId: RoomId; jobId: string };
 
 export type ServerMessage =
     | { type: "canvas_snapshot"; roomId: RoomId; state: CanvasState | null }
     | { type: "canvas_update"; roomId: RoomId; state: CanvasState }
     | { type: "chat"; roomId: RoomId; message: ChatMessage }
-    | { type: "ai"; roomId: RoomId; message: AIMessage };
+    | { type: "ai"; roomId: RoomId; message: AIMessage }
+    | { type: "ai_image_result"; roomId: RoomId; job: AIImageJob };

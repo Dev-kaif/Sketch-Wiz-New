@@ -131,6 +131,18 @@ wss.on("connection", (socket, request) => {
 
                     break;
                 }
+
+                case "ai_image_request": {
+                    broadcastToRoom(parsedData.roomId, {
+                        type: "ai_image_result",
+                        roomId: parsedData.roomId,
+                        job: {
+                            jobId: parsedData.jobId,
+                            status: "pending",
+                        },
+                    }, socket);
+                    break;
+                }
             }
         });
 

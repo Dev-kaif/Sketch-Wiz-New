@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
+    "dev": "concurrently \"tsx watch src/index.ts\" \"tsx watch src/server.ts\"",
     "build": "tsc",
-    "start": "node dist/index.js",
+    "start": "concurrently \"node dist/index.js\" \"node dist/server.js\"",
     "typecheck": "tsc --noEmit"
   },
   "keywords": [],
@@ -14,13 +14,19 @@
   "license": "ISC",
   "packageManager": "pnpm@10.28.1",
   "dependencies": {
+    "@imgly/background-removal-node": "^1.4.5",
+    "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
     "ws": "^8.19.0"
   },
   "devDependencies": {
+    "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^25.3.0",
     "@types/ws": "^8.18.1",
+    "concurrently": "^9.2.1",
+    "i": "^0.3.7",
+    "npm": "^11.10.0",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   }
