@@ -10,10 +10,15 @@ import {
     AuthPayload,
 } from "./types";
 
+import { server } from "./server";
+
+const wss = new WebSocketServer({
+    server,
+    path: "/ws",
+});
+
+
 const JWT_SECRET = process.env.JWT_SECRET!;
-
-const wss = new WebSocketServer({ port: 8000 });
-
 
 // Connected users
 const users: User[] = [];

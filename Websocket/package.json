@@ -2,11 +2,11 @@
   "name": "websocket",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "dev": "concurrently \"tsx watch src/index.ts\" \"tsx watch src/server.ts\"",
+    "dev": "tsx watch src/server.ts",
     "build": "tsc",
-    "start": "concurrently \"node dist/index.js\" \"node dist/server.js\"",
+    "start": "node dist/server.js",
     "typecheck": "tsc --noEmit"
   },
   "keywords": [],
@@ -24,7 +24,6 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^25.3.0",
     "@types/ws": "^8.18.1",
-    "concurrently": "^9.2.1",
     "i": "^0.3.7",
     "npm": "^11.10.0",
     "tsx": "^4.21.0",
